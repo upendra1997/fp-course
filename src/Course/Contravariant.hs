@@ -79,8 +79,10 @@ instance Contravariant Predicate where
     (b -> a)
     -> Predicate a
     -> Predicate b
-  (>$<) =
-    error "todo: Course.Contravariant (>$<)#instance Predicate"
+  (>$<) fba pa = let fabool = runPredicate pa
+                     pbbool = Predicate $ fabool . fba
+                 in pbbool
+    -- error "todo: Course.Contravariant (>$<)#instance Predicate"
 
 -- | Use the function before comparing.
 --
@@ -91,8 +93,10 @@ instance Contravariant Comparison where
     (b -> a)
     -> Comparison a
     -> Comparison b
-  (>$<) =
-    error "todo: Course.Contravariant (>$<)#instance Comparison"
+  (>$<) fba ca = let faaorder = runComparison ca
+                     caao = Comparison $ \x y -> faaorder (fba x) (fba y)
+                 in caao
+    -- error "todo: Course.Contravariant (>$<)#instance Comparison"
 
 -- | The kind of the argument to 'Contravariant' is @Type -> Type@, so
 -- our '(>$<)' only works on the final type argument. The
@@ -106,8 +110,10 @@ instance Contravariant (SwappedArrow t) where
     (b -> a)
     -> SwappedArrow x a
     -> SwappedArrow x b
-  (>$<) =
-    error "todo: Course.Contravariant (>$<)#instance SwappedArrow"
+  (>$<) fba saxa =let fax = runSwappedArrow saxa
+                      saxb = SwappedArrow $ fax . fba
+                 in saxb
+    -- error "todo: Course.Contravariant (>$<)#instance SwappedArrow"
 
 
 -- | If we give our 'Contravariant' an @a@, then we can "accept" any
@@ -119,5 +125,5 @@ instance Contravariant (SwappedArrow t) where
   a
   -> k a
   -> k b
-(>$) =
-  error "todo: Course.Contravariant#(>$)"
+(>$) a = (>$<) (const a)
+  -- error "todo: Course.Contravariant#(>$)"
